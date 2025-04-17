@@ -1,6 +1,6 @@
 # Tech Challenge Fase 1 - Previsão de Custos Médicos
 
-Este projeto tem como objetivo desenvolver modelos de machine learning para prever o preço de seguro de saúde com base em dados de clientes. O desafio envolve desde a análise exploratória dos dados, engenharia de features, treinamento e avaliação de múltiplos modelos, até a documentação dos resultados.
+Este projeto tem como objetivo desenvolver modelos de machine learning para prever o preço de seguro de saúde com base em dados de clientes. O desafio envolve desde a análise exploratória dos dados, engenharia de features, treinamento e avaliação de múltiplos modelos, até a documentação dos resultados. O [Notebook]("./Tech_Challenge_v1.ipynb") contém o código e explicações.
 
 ## Sumário
 - [Sobre o Projeto](#sobre-o-projeto)
@@ -43,9 +43,8 @@ O pipeline do projeto contempla:
 O Random Forest e o XGBoost destacaram-se como os algoritmos mais eficazes para o conjunto de dados.
 
 ## Documentação Extra
-- [Escopo de trabalho](doc/IADT%20-%20Fase%201%20-%20Tech%20Challenge.pdf): Documento oficial do projeto
-- [Solução em PDF](doc/Tech_Challenge_v1.pdf): Notebook em pdf com o código e explicações
-
+- [Escopo de trabalho](doc/IADT%20-%20Fase%201%20-%20Tech%20Challenge.pdf)
+- [Notebook em PDF](doc/Tech_Challenge_v1.pdf)
 
 ## Instalação
 1. Clone o repositório (ou faça download dos arquivos):
@@ -87,15 +86,6 @@ O Random Forest e o XGBoost destacaram-se como os algoritmos mais eficazes para 
 
 > **Dica:** Selecione o kernel `venv` (ou o nome do seu ambiente virtual) no Jupyter para garantir que todas as dependências estejam disponíveis.
 
-### Scripts Python
-Execute os scripts diretamente pelo terminal, por exemplo:
-```bash
-python simple_model.py
-python model_evaluation.py
-python complete_model.py
-```
-Consulte cada script para detalhes sobre argumentos e saídas.
-
 ## Colaboração
 - Documente funções e etapas relevantes no notebook e scripts.
 - Mantenha o ambiente virtual e o arquivo `requirements.txt` atualizados após instalar novos pacotes:
@@ -110,4 +100,4 @@ Consulte cada script para detalhes sobre argumentos e saídas.
    - Jonas Lisboa Silva         
    - Robson Carvalho Calixto    
    - Vinicius Fernando M. Costa 
-- Dataset: [Kaggle - Medicalpremium.csv](https://www.kaggle.com/)
+- Dataset: [Kaggle - Medicalpremium.csv](https://www.kaggle.com/datasets/tejashvi14/medical-insurance-premium-prediction)
