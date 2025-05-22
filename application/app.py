@@ -1,75 +1,32 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-import pickle
+import joblib
 import os
 import sys
-from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestRegressor
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-# Add the parent directory to sys.path to import from other modules if needed
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+MODEL_PATH = './model/melhor_modelo.pkl'
 
-# Set page configuration
 st.set_page_config(
     page_title="Previsão de Preço do Seguro Médico",
     page_icon="💉",
     layout="centered"
 )
 
-# Title and description
 st.title("Previsão de Preço do Seguro Médico")
 st.markdown("""
      Esta aplicação utiliza um modelo de machine learning para prever o valor do prêmio de seguro médico
     com base nas características do cliente.
 """)
 
-# Function to calculate BMI and BMI category
-def calculate_bmi(height, weight):
-    height_m = height / 100
-    bmi = weight / (height_m ** 2)
-    
-    if bmi < 18.5:
-        category = 'Abaixo do peso'
-    elif bmi < 25:
-        category = 'Peso normal'
-    elif bmi < 30:
-        category = 'Sobrepeso'
-    elif bmi < 35:
-        category = 'Obesidade Grau I'
-    elif bmi < 40:
-        category = 'Obesidade Grau II'
-    else:
-        category = 'Obesidade Grau III'
-    
-    return bmi, category
-
-# Function to determine age category
-def get_age_category(age):
-    if age < 18:
-        return 'Criança', 1
-    elif age < 25:
-        return 'Jovem', 2
-    elif age < 35:
-        return 'Jovem Adulto', 3
-    elif age < 45:
-        return 'Adulto', 4
-    elif age < 55:
-        return 'Adulto', 5
-    elif age < 65:
-        return 'Meia-idade', 6
-    else:
-        return 'Idoso', 7
-
-# Create input form
 st.sidebar.header("Informações do Cliente")
 
-# Basic information
 age = st.sidebar.slider("Idade", 18, 100, 45)
 height = st.sidebar.slider("Altura (cm)", 100, 220, 170)
 weight = st.sidebar.slider("Peso (kg)", 30, 200, 70)
 
-# Health conditions
 st.sidebar.subheader("Condições de Saúde")
 diabetes = st.sidebar.checkbox("Diabetes")
 blood_pressure = st.sidebar.checkbox("Problemas de Pressão Arterial")
@@ -78,14 +35,111 @@ any_chronic_diseases = st.sidebar.checkbox("Doenças Crônicas")
 known_allergies = st.sidebar.checkbox("Alergias Conhecidas")
 history_of_cancer = st.sidebar.checkbox("Histórico de Câncer na Família")
 
-# Number of major surgeries
 number_of_major_surgeries = st.sidebar.slider("Número de Cirurgias Importantes", 0, 5, 0)
 
-# Calculate BMI and get categories
-bmi, bmi_category = calculate_bmi(height, weight)
-age_category, age_order = get_age_category(age)
+try:
+    modelo = joblib.load(MODEL_PATH)
+    modelo_carregado = True
+except Exception as e:
+    st.error(f"Erro ao carregar o modelo: {e}")
+    modelo = None
+    modelo_carregado = False
 
-# Display client information
+def predict_premium(features):
+    try:
+        if modelo is None:
+            return None
+        df = pd.DataFrame([features])
+        prediction = modelo.predict(df)[0]
+        return prediction
+    except Exception as e:
+        st.error(f"Erro na previsão: {e}")
+        return None
+
+def show_training_info():
+    with st.expander("Informações sobre o Modelo"):
+        st.subheader("Detalhes do Modelo de Machine Learning")
+        st.markdown("""
+        **Modelo utilizado**: XGBoost Regressor
+        
+        **Métricas de desempenho**:
+        - RMSE (Erro Quadrático Médio): ~2693.11
+        - R² (Coeficiente de Determinação): ~0.78
+        
+        **Variáveis utilizadas**:
+        - IMC (Índice de Massa Corporal)
+        - Transplantes
+        - Doenças Crônicas
+        - Histórico de Câncer na Família
+        - Idade
+        
+        **Importância das variáveis**:
+        - IMC: 58.9%
+        - Transplantes: 17.3%
+        - Doenças Crônicas: 10.8%
+        - Histórico de Câncer: 8.0%
+        - Idade: 5.0%
+        """)
+        if modelo_carregado and hasattr(modelo['regressor'], 'feature_importances_'):
+            importances = {
+                'IMC': 0.589087,
+                'Transplantes': 0.172574,
+                'Doenças Crônicas': 0.108005,
+                'Histórico de Câncer': 0.080232,
+                'Idade': 0.050102
+            }
+            
+            fig, ax = plt.subplots(figsize=(8, 4))
+            sns.barplot(x=list(importances.values()), y=list(importances.keys()), palette="viridis")
+            ax.set_title("Importância das Variáveis no Modelo XGBoost")
+            ax.set_xlabel("Importância")
+            st.pyplot(fig)
+
+def calculate_bmi(height, weight):
+    height_m = height / 100
+    bmi = weight / (height_m ** 2)
+    
+    if bmi < 18.5:
+        category = 'Abaixo do peso'
+        needs_attention = False
+    elif bmi < 25:
+        category = 'Peso normal'
+        needs_attention = False
+    elif bmi < 30:
+        category = 'Sobrepeso'
+        needs_attention = False
+    elif bmi < 35:
+        category = 'Obesidade Grau I'
+        needs_attention = False
+    elif bmi < 40:
+        category = 'Obesidade Grau II'
+        needs_attention = False
+    else:
+        category = 'Obesidade Grau III'
+        needs_attention = True
+    
+    return bmi, category, needs_attention
+
+bmi, bmi_category, needs_special_attention = calculate_bmi(height, weight)
+
+if needs_special_attention:
+    st.warning("⚠️ **Atenção**: Casos de Obesidade Grau III requerem análise especial. Por favor, dirija-se ao balcão de negociação para uma avaliação personalizada do seu seguro.")
+
+if age < 18:
+    age_category, age_order = 'Criança', 1
+elif age < 25:
+    age_category, age_order = 'Jovem', 2
+elif age < 35:
+    age_category, age_order = 'Jovem Adulto', 3
+elif age < 45:
+    age_category, age_order = 'Adulto', 4
+elif age < 55:
+    age_category, age_order = 'Adulto', 5
+elif age < 65:
+    age_category, age_order = 'Meia-idade', 6
+else:
+    age_category, age_order = 'Idoso', 7
+
 st.header("Informações do Cliente")
 
 col1, col2 = st.columns(2)
@@ -108,72 +162,38 @@ with col2:
     st.write(f"**Histórico de Câncer na Família:** {'Sim' if history_of_cancer else 'Não'}")
     st.write(f"**Número de Cirurgias Importantes:** {number_of_major_surgeries}")
 
-# Create prediction button
-if st.button("Calcular Prêmio de Seguro"):
-    # Create a dataframe with client data
-    dados_cliente = pd.DataFrame({
-        'Age': [age],
-        'Diabetes': [1 if diabetes else 0],
-        'BloodPressureProblems': [1 if blood_pressure else 0],
-        'AnyTransplants': [1 if any_transplants else 0],
-        'AnyChronicDiseases': [1 if any_chronic_diseases else 0],
-        'Height': [height],
-        'Weight': [weight],
-        'KnownAllergies': [1 if known_allergies else 0],
-        'HistoryOfCancerInFamily': [1 if history_of_cancer else 0],
-        'NumberOfMajorSurgeries': [number_of_major_surgeries],
-        'imc': [bmi],
-        'faixa_etaria': [age_category],
-        'ordem_faixa': [age_order],
-        'categoria_imc': [bmi_category],
-        'faixa_preco': ['Médio'],  # Default value for compatibility
-        'range': [2]  # Default value for compatibility
-    })
-    
-    # Try to load the model and scaler
-    try:
-        # For demonstration purposes, we'll create a simple model
-        # In a real scenario, you would load the saved model and scaler
-        model = RandomForestRegressor(n_estimators=100, random_state=42)
-        scaler = StandardScaler()
+show_training_info()
+
+button_disabled = needs_special_attention
+if st.button("Calcular Prêmio de Seguro", disabled=button_disabled):
+    if modelo is None:
+        st.error("Modelo não está disponível. Verifique se o arquivo do modelo existe.")
+    else:
+        # Preparar os dados para previsão
+        features = {            
+            'AnyTransplants': 1 if any_transplants else 0,
+            'AnyChronicDiseases': 1 if any_chronic_diseases else 0,
+            'HistoryOfCancerInFamily': 1 if history_of_cancer else 0,
+            'Age': age,
+            'imc': bmi
+        }
         
-        # Prepare the data for prediction
-        dados_codificados = pd.get_dummies(dados_cliente, drop_first=True)
+        predicted_price = predict_premium(features)
         
-        # Since we don't have the actual trained model, we'll simulate a prediction
-        # based on the client's characteristics
-        base_price = 20000
-        age_factor = age / 40  # Age impact
-        health_factor = 1.0
-        
-        # Add factors for health conditions
-        if diabetes:
-            health_factor += 0.2
-        if blood_pressure:
-            health_factor += 0.15
-        if any_transplants:
-            health_factor += 0.3
-        if any_chronic_diseases:
-            health_factor += 0.25
-        if known_allergies:
-            health_factor += 0.05
-        if history_of_cancer:
-            health_factor += 0.1
-        
-        # Add factor for surgeries
-        health_factor += number_of_major_surgeries * 0.1
-  
-        if bmi < 18.5 or bmi >= 30:
-            health_factor += 0.1  # Higher risk for underweight or obese
-        
-        predicted_price = base_price * age_factor * health_factor
-     
-        st.header("Resultado da Previsão")
-        st.success(f"O prêmio de seguro médico previsto é: R$ {predicted_price:.2f}")       
-    
-    except Exception as e:
-        st.error(f"Erro ao fazer a previsão: {e}")
-        st.info("""
-        Para implementar completamente este aplicativo, é necessário treinar e salvar o modelo 
-        e o scaler em arquivos que possam ser carregados aqui.
-        """)
+        if predicted_price is not None:
+            st.header("Resultado da Previsão")
+            st.success(f"O prêmio de seguro médico previsto é: R$ {predicted_price:.2f}")
+            
+            st.subheader("Fatores que influenciam o preço:")
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown("**Fatores de maior impacto:**")
+                st.markdown(f"- IMC: {bmi:.2f} ({bmi_category})")
+                st.markdown(f"- Transplantes: {'Sim' if any_transplants else 'Não'}")
+                st.markdown(f"- Doenças Crônicas: {'Sim' if any_chronic_diseases else 'Não'}")
+            
+            with col2:
+                st.markdown("**Fatores de menor impacto:**")
+                st.markdown(f"- Histórico de Câncer: {'Sim' if history_of_cancer else 'Não'}")
+                st.markdown(f"- Idade: {age} anos ({age_category})")
