@@ -179,7 +179,6 @@ Este projeto foi desenvolvido pelo Grupo 56 como parte do Tech Challenge FIAP PÃ
 
 - Araguacy Bezerra Pereira
 - Emerson Vitorio de Oliveira
-- Jonas Lisboa Silva
 - Robson Carvalho Calixto
 - Vinicius Fernando M. Costa
 
