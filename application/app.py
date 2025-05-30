@@ -81,12 +81,14 @@ def show_training_info():
         - Idade: 5.0%
         """)
         if modelo_carregado and hasattr(modelo['regressor'], 'feature_importances_'):
+            feature_importances = modelo['regressor'].feature_importances_
+            print(feature_importances)
             importances = {
-                'IMC': 0.589087,
-                'Transplantes': 0.172574,
-                'Doenças Crônicas': 0.108005,
-                'Histórico de Câncer': 0.080232,
-                'Idade': 0.050102
+                'Transplantes': feature_importances[0],
+                'Doenças Crônicas': feature_importances[1],
+                'Histórico de Câncer': feature_importances[2],
+                'IMC': feature_importances[3],
+                'Idade': feature_importances[4]               
             }
             
             fig, ax = plt.subplots(figsize=(8, 4))
