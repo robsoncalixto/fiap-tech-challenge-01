@@ -179,7 +179,6 @@ Este projeto foi desenvolvido pelo Grupo 56 como parte do Tech Challenge FIAP P�
 
 - Araguacy Bezerra Pereira
 - Emerson Vitorio de Oliveira
-- Jonas Lisboa Silva
 - Robson Carvalho Calixto
 - Vinicius Fernando M. Costa
 
@@ -188,3 +187,4 @@ Este projeto foi desenvolvido pelo Grupo 56 como parte do Tech Challenge FIAP P�
 - Dataset: [Kaggle - Medical Insurance Premium Prediction](https://www.kaggle.com/datasets/tejashvi14/medical-insurance-premium-prediction)
 - James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). *An Introduction to Statistical Learning*
 - Géron, A. (2019). *Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow*
+- FÁVERO, Luiz Paulo; BELFIORE, Patrícia. *Manual de análise de dados: estatística e machine learning* 2. ed. Rio de Janeiro: Elsevier, 2024
