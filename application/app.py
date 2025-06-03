@@ -23,9 +23,9 @@ st.markdown("""
 
 st.sidebar.header("Informações do Cliente")
 
-age = st.sidebar.slider("Idade", 18, 100, 45)
-height = st.sidebar.slider("Altura (cm)", 100, 220, 170)
-weight = st.sidebar.slider("Peso (kg)", 30, 200, 70)
+age = st.sidebar.slider("Idade", 18, 70, 45)
+height = st.sidebar.slider("Altura (cm)", 100, 200, 170)
+weight = st.sidebar.slider("Peso (kg)", 30, 150, 70)
 
 st.sidebar.subheader("Condições de Saúde")
 diabetes = st.sidebar.checkbox("Diabetes")
@@ -59,27 +59,7 @@ def predict_premium(features):
 def show_training_info():
     with st.expander("Informações sobre o Modelo"):
         st.subheader("Detalhes do Modelo de Machine Learning")
-        st.markdown("""
-        **Modelo utilizado**: XGBoost Regressor
-        
-        **Métricas de desempenho**:
-        - RMSE (Erro Quadrático Médio): ~2693.11
-        - R² (Coeficiente de Determinação): ~0.78
-        
-        **Variáveis utilizadas**:
-        - IMC (Índice de Massa Corporal)
-        - Transplantes
-        - Doenças Crônicas
-        - Histórico de Câncer na Família
-        - Idade
-        
-        **Importância das variáveis**:
-        - IMC: 58.9%
-        - Transplantes: 17.3%
-        - Doenças Crônicas: 10.8%
-        - Histórico de Câncer: 8.0%
-        - Idade: 5.0%
-        """)
+        st.markdown("**Modelo utilizado**: XGBoost Regressor")
         if modelo_carregado and hasattr(modelo['regressor'], 'feature_importances_'):
             feature_importances = modelo['regressor'].feature_importances_
             print(feature_importances)
@@ -87,8 +67,9 @@ def show_training_info():
                 'Transplantes': feature_importances[0],
                 'Doenças Crônicas': feature_importances[1],
                 'Histórico de Câncer': feature_importances[2],
-                'IMC': feature_importances[3],
-                'Idade': feature_importances[4]               
+                'Número de Cirurgias': feature_importances[3],
+                'Idade': feature_importances[4],    
+                'IMC': feature_importances[5]                           
             }
             
             fig, ax = plt.subplots(figsize=(8, 4))
@@ -176,6 +157,7 @@ if st.button("Calcular Prêmio de Seguro", disabled=button_disabled):
             'AnyTransplants': 1 if any_transplants else 0,
             'AnyChronicDiseases': 1 if any_chronic_diseases else 0,
             'HistoryOfCancerInFamily': 1 if history_of_cancer else 0,
+            'NumberOfMajorSurgeries': number_of_major_surgeries,
             'Age': age,
             'imc': bmi
         }
@@ -185,17 +167,3 @@ if st.button("Calcular Prêmio de Seguro", disabled=button_disabled):
         if predicted_price is not None:
             st.header("Resultado da Previsão")
             st.success(f"O prêmio de seguro médico previsto é: R$ {predicted_price:.2f}")
-            
-            st.subheader("Fatores que influenciam o preço:")
-            
-            col1, col2 = st.columns(2)
-            with col1:
-                st.markdown("**Fatores de maior impacto:**")
-                st.markdown(f"- IMC: {bmi:.2f} ({bmi_category})")
-                st.markdown(f"- Transplantes: {'Sim' if any_transplants else 'Não'}")
-                st.markdown(f"- Doenças Crônicas: {'Sim' if any_chronic_diseases else 'Não'}")
-            
-            with col2:
-                st.markdown("**Fatores de menor impacto:**")
-                st.markdown(f"- Histórico de Câncer: {'Sim' if history_of_cancer else 'Não'}")
-                st.markdown(f"- Idade: {age} anos ({age_category})")
