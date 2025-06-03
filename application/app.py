@@ -28,14 +28,10 @@ height = st.sidebar.slider("Altura (cm)", 100, 200, 170)
 weight = st.sidebar.slider("Peso (kg)", 30, 150, 70)
 
 st.sidebar.subheader("Condições de Saúde")
-diabetes = st.sidebar.checkbox("Diabetes")
-blood_pressure = st.sidebar.checkbox("Problemas de Pressão Arterial")
 any_transplants = st.sidebar.checkbox("Transplantes")
 any_chronic_diseases = st.sidebar.checkbox("Doenças Crônicas")
-known_allergies = st.sidebar.checkbox("Alergias Conhecidas")
 history_of_cancer = st.sidebar.checkbox("Histórico de Câncer na Família")
-
-number_of_major_surgeries = st.sidebar.slider("Número de Cirurgias Importantes", 0, 5, 0)
+number_of_major_surgeries = st.sidebar.slider("Número de Cirurgias Importantes", 0, 3, 0)
 
 try:
     modelo = joblib.load(MODEL_PATH)
@@ -62,14 +58,13 @@ def show_training_info():
         st.markdown("**Modelo utilizado**: XGBoost Regressor")
         if modelo_carregado and hasattr(modelo['regressor'], 'feature_importances_'):
             feature_importances = modelo['regressor'].feature_importances_
-            print(feature_importances)
             importances = {
                 'Transplantes': feature_importances[0],
                 'Doenças Crônicas': feature_importances[1],
                 'Histórico de Câncer': feature_importances[2],
                 'Número de Cirurgias': feature_importances[3],
-                'Idade': feature_importances[4],    
-                'IMC': feature_importances[5]                           
+                'Idade': feature_importances[4],
+                'IMC': feature_importances[5]
             }
             
             fig, ax = plt.subplots(figsize=(8, 4))
@@ -80,8 +75,7 @@ def show_training_info():
 
 def calculate_bmi(height, weight):
     height_m = height / 100
-    bmi = weight / (height_m ** 2)
-    
+    bmi = weight / (height_m ** 2)    
     if bmi < 18.5:
         category = 'Abaixo do peso'
         needs_attention = False
@@ -99,8 +93,7 @@ def calculate_bmi(height, weight):
         needs_attention = False
     else:
         category = 'Obesidade Grau III'
-        needs_attention = True
-    
+        needs_attention = True    
     return bmi, category, needs_attention
 
 bmi, bmi_category, needs_special_attention = calculate_bmi(height, weight)
@@ -137,11 +130,8 @@ with col1:
 
 with col2:
     st.subheader("Condições de Saúde")
-    st.write(f"**Diabetes:** {'Sim' if diabetes else 'Não'}")
-    st.write(f"**Problemas de Pressão:** {'Sim' if blood_pressure else 'Não'}")
     st.write(f"**Transplantes:** {'Sim' if any_transplants else 'Não'}")
     st.write(f"**Doenças Crônicas:** {'Sim' if any_chronic_diseases else 'Não'}")
-    st.write(f"**Alergias Conhecidas:** {'Sim' if known_allergies else 'Não'}")
     st.write(f"**Histórico de Câncer na Família:** {'Sim' if history_of_cancer else 'Não'}")
     st.write(f"**Número de Cirurgias Importantes:** {number_of_major_surgeries}")
 
@@ -152,7 +142,6 @@ if st.button("Calcular Prêmio de Seguro", disabled=button_disabled):
     if modelo is None:
         st.error("Modelo não está disponível. Verifique se o arquivo do modelo existe.")
     else:
-        # Preparar os dados para previsão
         features = {            
             'AnyTransplants': 1 if any_transplants else 0,
             'AnyChronicDiseases': 1 if any_chronic_diseases else 0,
@@ -163,7 +152,6 @@ if st.button("Calcular Prêmio de Seguro", disabled=button_disabled):
         }
         
         predicted_price = predict_premium(features)
-        
         if predicted_price is not None:
             st.header("Resultado da Previsão")
             st.success(f"O prêmio de seguro médico previsto é: R$ {predicted_price:.2f}")
