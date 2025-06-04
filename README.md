@@ -1,6 +1,6 @@
 # Projeto de Previsão de Custos de Seguro Médico
 
-Este projeto utiliza técnicas de machine learning para prever o preço de seguro médico com base em características dos clientes. O projeto abrange desde a análise exploratória de dados até a implementação e avaliação de modelos preditivos.
+Este projeto utiliza técnicas de machine learning para prever o preço de seguro médico com base em características dos clientes. O projeto abrange desde a análise exploratória de dados até a implementação e avaliação de modelos preditivos. Além disso, foi criada uma [apresentação](https://youtu.be/b1E_ft5LlAU?si=R5-1769VQwm99r-x) para explicar o projeto e os resultados.
 
 ![Machine Learning](https://img.shields.io/badge/Machine%20Learning-Regression-blue)
 ![Python](https://img.shields.io/badge/Python-3.12.2-brightgreen)
