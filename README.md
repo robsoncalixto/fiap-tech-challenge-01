@@ -27,6 +27,7 @@ Este projeto foi desenvolvido como parte do Tech Challenge da FIAP Pós-Tech, co
 - Pré-processamento e engenharia de features
 - Implementação e comparação de múltiplos modelos de regressão
 - Avaliação de desempenho e interpretação dos resultados
+- Deploy do Modelo
 
 O projeto demonstra a aplicação prática de técnicas de ciência de dados para resolver um problema do setor de saúde, permitindo estimar com maior precisão os prêmios de seguro com base nas características dos clientes.
 
@@ -103,20 +104,24 @@ O processo de modelagem (`Tech_Challenge_Modelagem.ipynb`) inclui:
 
 Os modelos apresentaram os seguintes desempenhos:
 
-| Modelo | RMSE | MAE | R² |
-|--------|------|-----|-----|
-| Regressão Linear | 3792.12 | 2728.35 | 0.63 |
-| Random Forest | 407.69 | 289.12 | 0.85 |
-| XGBoost | 582.55 | 412.78 | 0.91 |
+|Modelo             |RMSE         | MAE         |R2        |CV_RMSE     |
+|-------------------|-------------|-------------|----------|------------|
+| XGBoost           |2501.227199  |1576.969849  |0.850616  |2678.532324 |
+| GradientBoosting  |2717.498629  |1689.815781  |0.823666  |2709.689012 |
+| RandomForest      |2759.404794  |1506.825397  |0.818185  |2644.595644 |
+| LinearRegression  |3629.123920  |2734.799329  |0.685514  |3413.806191 |
+| Lasso             |3629.470236  |2734.930812  |0.685454  |3413.800400 |
+| Ridge             |3630.189774  |2736.023939  |0.685329  |3413.750079 |
 
-O **XGBoost** demonstrou o melhor desempenho geral, com um R² de 0.85 e RMSE de 407.69, superando significativamente o modelo baseline de Regressão Linear.
+O **XGBoost** demonstrou o melhor desempenho geral, com um R² de 0.85 e RMSE de 2501.22, superando significativamente o modelo baseline de Regressão Linear.
 
 As features mais importantes para a previsão foram:
 1. Idade
 2. Presença de transplantes
-3. IMC (Índice de Massa Corporal)
-4. Presença de doenças crônicas
-5. Histórico familiar de câncer
+3. Presença de doenças crônicas
+4. Histórico familiar de câncer
+5. Número de cirurgias
+6. IMC (Índice de Massa Corporal) 
 
 ## 📋 Pré-requisitos
 
